@@ -1,2 +1,2 @@
 data/
-src/config.yaml
+src/*.yaml
