@@ -5,7 +5,7 @@ import numpy as np
 from utils.backtest_trading import close_trade, start_trade, value_generator
 from src.get_configs import configs
 
-def margin_decision(balance, start_point, end_point, increasement, csv_name)
+def margin_decision(balance, start_point, end_point, increasement, csv_name):
     margin_list = []
     df = pd.read_csv(csv_name)
     for margin_threshold in(np.arange(start_point, end_point, increasement)):

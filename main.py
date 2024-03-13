@@ -13,6 +13,7 @@ app = typer.Typer()
 
 @app.command()
 def data_gatherer():
+    print(1)
     data_collector(configs("csv_name"), configs("symbol"), configs("data_collector_interval"), configs("data_collector_start"), 
                     configs("data_collector_end"), configs("endpoint"), configs("columns"))
 
@@ -31,3 +32,6 @@ def single_backtest():
 @app.command()
 def algorithmic_trading():
     algo_trading(configs("API_KEY"), configs("SECRET_KEY"), configs("symbol"), configs("margin_threshold"))
+
+if __name__ == "__main__":
+    app()

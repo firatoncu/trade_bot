@@ -29,8 +29,8 @@ def handle_position(API_KEY, SECRET_KEY, symbol, symbol_data, random_choice):
     try:
         closing_order = exchange.create_order(symbol, 'market', side, abs(amount), None)
         if side == "sell":
-            print(f"{datetime.now().strftime("%H:%M:%S")} - Short position opened from {current_balance} dollars with price of {current_price}")
+            print(f"Short position opened from {current_balance} dollars with price of {current_price}")
         else:
-            print(f"{datetime.now().strftime("%H:%M:%S")} - Long position opened from {current_balance} dollars with price of {current_price}. ")
+            print(f"Long position opened from {current_balance} dollars with price of {current_price}. ")
     except Exception as e:
         print(f"Error closing position for {symbol}: {type(e).__name__} - {str(e)}")
