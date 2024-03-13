@@ -13,7 +13,6 @@ app = typer.Typer()
 
 @app.command()
 def data_gatherer():
-    print(1)
     data_collector(configs("csv_name"), configs("symbol"), configs("data_collector_interval"), configs("data_collector_start"), 
                     configs("data_collector_end"), configs("endpoint"), configs("columns"))
 
