@@ -1,0 +1,11 @@
+pandas
+numpy
+typer
+random
+time
+datetime
+ccxt
+binance-python
+yaml
+requests
+statistics

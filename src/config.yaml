@@ -1,0 +1,15 @@
+API_KEY: "cZOQETmok3Adie7fF73H10TNPzXc2pSoJ28fjjl6Yzz3aDuK6OImRIxWBNeZqqu0"
+SECRET_KEY: "1lKxNJqCBxKwC5tKHKqDMRpninZW5vdaYY9hCmhT6aNAVBicuVzXeABblH2vuziN"
+endpoint: "https://api.binance.com/api/v3/klines"
+
+symbol: "BNBUSDT"
+backtest_iteration_count: 10
+backtest_balance: 100
+
+data_collector_interval: "1s"
+data_collector_start: 1646082000000
+data_collector_end: 1677704399999
+
+columns: ["timestamp", "open", "high", "low", "close", "volume", "close_time", 
+          "quote_asset_volume", "num_trades", "taker_buy_base_asset_volume", 
+          "taker_buy_quote_asset_volume",  "ignore"]
