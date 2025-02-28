@@ -52,4 +52,3 @@ default_config = {
    ```bash
    cd web
    python app.py
-```
