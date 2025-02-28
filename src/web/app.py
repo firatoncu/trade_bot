@@ -1,5 +1,11 @@
-from flask import Flask, render_template, request, jsonify
+import os
+import sys
 import threading
+from flask import Flask, render_template, request, jsonify
+
+# Proje kök dizinini sys.path'e ekle
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
+
 from src.trading_bot import TradingBot
 from src.config import default_config
 
@@ -8,6 +14,7 @@ app = Flask(__name__, template_folder='templates', static_folder='static')
 bot = None
 bot_thread = None
 config = default_config.copy()
+
 
 @app.route('/')
 def index():
