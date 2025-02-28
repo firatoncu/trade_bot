@@ -1,7 +1,7 @@
 
 # Crypto Trading Bot
 
-This repository contains a **Crypto Trading Bot** designed for automated futures trading on Binance. The bot leverages the Binance API to execute trades based on configurable parameters and provides a web-based interface for managing trading operations. Built with Python and Flask, it aims to simplify cryptocurrency trading by offering real-time monitoring and easy configuration through an elegant UI.
+This repository contains a **Crypto Trading Bot** designed for automated futures trading on Binance. The bot leverages the Binance API to execute trades based on configurable parameters and provides a web-based interface for managing trading operations. Built with Python and Flask, it aims to simplify cryptocurrency trading by offering real-time monitoring and easy configuration through an UI.
 
 ## Purpose
 The primary purpose of this bot is to automate cryptocurrency futures trading on Binance. It allows users to:
