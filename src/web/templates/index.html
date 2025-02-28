@@ -5,68 +5,86 @@
     <title>Kripto Trading Bot</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
+    <header class="header">
         <h1>Kripto Trading Bot</h1>
-        <div id="status" class="card">
-            <div class="card-body">
-                <h5>Durum</h5>
-                <p id="running-status">{{ 'Bot çalışıyor' if status['running'] else 'Bot durduruldu' }}</p>
-                {% if status['running'] %}
-                    <p>Toplam Özkaynak: <span id="total-equity">{{ status['total_equity']|round(2) }}</span> USDT</p>
-                    <ul>
-                    {% for symbol, data in status['symbols'].items() %}
-                        <li>{{ symbol }}: Özkaynak: {{ data['equity']|round(2) }}, Pozisyon: {{ data['position_size'] }}, Giriş Fiyatı: {{ data['entry_price'] or 'Yok' }}, İşlem Sayısı: {{ data['transactions'] }}</li>
-                    {% endfor %}
-                    </ul>
-                {% endif %}
+        <div class="header-gradient"></div>
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div id="status" class="card status-card">
+                    <div class="card-body">
+                        <h5>Durum Paneli</h5>
+                        <p id="running-status" class="status-text">{{ 'Bot Çalışıyor' if status['running'] else 'Bot Durduruldu' }}</p>
+                        {% if status['running'] %}
+                            <p class="equity-text">Toplam Özkaynak: <span id="total-equity">{{ status['total_equity']|round(2) }}</span> USDT</p>
+                            <ul class="symbol-list">
+                                {% for symbol, data in status['symbols'].items() %}
+                                    <li>{{ symbol }}: 
+                                        <span class="highlight">Özkaynak: {{ data['equity']|round(2) }}</span>, 
+                                        Pozisyon: {{ data['position_size'] }}, 
+                                        Giriş: {{ data['entry_price'] or 'Yok' }}, 
+                                        İşlemler: {{ data['transactions'] }}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <form id="config-form" method="POST" action="/update_config" class="config-card">
+                    <h5>Yapılandırma</h5>
+                    <div class="form-group">
+                        <label>Semboller (virgülle ayrılmış):</label>
+                        <input type="text" class="form-control" name="symbols" value="{{ ','.join(config['symbols']) }}" {% if status['running'] %}disabled{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label>Grid Adımı:</label>
+                        <input type="number" step="0.0001" class="form-control" name="grid_step" value="{{ config['grid_step'] }}" {% if status['running'] %}disabled{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label>Kaldıraç:</label>
+                        <input type="number" class="form-control" name="leverage" value="{{ config['leverage'] }}" {% if status['running'] %}disabled{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label>Komisyon:</label>
+                        <input type="number" step="0.0001" class="form-control" name="commission" value="{{ config['commission'] }}" {% if status['running'] %}disabled{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label>Başlangıç Sermayesi (USDT):</label>
+                        <input type="number" class="form-control" name="initial_capital" value="{{ config['initial_capital'] }}" {% if status['running'] %}disabled{% endif %}>
+                    </div>
+                    <div class="form-group">
+                        <label>Hedef Kar Oranı:</label>
+                        <input type="number" step="0.0001" class="form-control" name="target_profit" value="{{ config['target_profit'] }}" {% if status['running'] %}disabled{% endif %}>
+                    </div>
+                    <button type="submit" class="btn btn-primary config-btn" {% if status['running'] %}disabled{% endif %}>Güncelle</button>
+                </form>
+                <div class="control-buttons">
+                    <button id="start-btn" class="btn btn-success control-btn" {% if status['running'] %}disabled{% endif %}>Başlat</button>
+                    <button id="stop-btn" class="btn btn-danger control-btn" {% if not status['running'] %}disabled{% endif %}>Durdur</button>
+                </div>
             </div>
         </div>
-        <form id="config-form" method="POST" action="/update_config">
-            <div class="form-group">
-                <label>Semboller (virgülle ayrılmış):</label>
-                <input type="text" class="form-control" name="symbols" value="{{ ','.join(config['symbols']) }}" {% if status['running'] %}disabled{% endif %}>
-            </div>
-            <div class="form-group">
-                <label>Grid Adımı:</label>
-                <input type="number" step="0.0001" class="form-control" name="grid_step" value="{{ config['grid_step'] }}" {% if status['running'] %}disabled{% endif %}>
-            </div>
-            <div class="form-group">
-                <label>Kaldıraç:</label>
-                <input type="number" class="form-control" name="leverage" value="{{ config['leverage'] }}" {% if status['running'] %}disabled{% endif %}>
-            </div>
-            <div class="form-group">
-                <label>Komisyon:</label>
-                <input type="number" step="0.0001" class="form-control" name="commission" value="{{ config['commission'] }}" {% if status['running'] %}disabled{% endif %}>
-            </div>
-            <div class="form-group">
-                <label>Başlangıç Sermayesi (USDT):</label>
-                <input type="number" class="form-control" name="initial_capital" value="{{ config['initial_capital'] }}" {% if status['running'] %}disabled{% endif %}>
-            </div>
-            <div class="form-group">
-                <label>Hedef Kar Oranı:</label>
-                <input type="number" step="0.0001" class="form-control" name="target_profit" value="{{ config['target_profit'] }}" {% if status['running'] %}disabled{% endif %}>
-            </div>
-            <button type="submit" class="btn btn-primary" {% if status['running'] %}disabled{% endif %}>Yapılandırmayı Güncelle</button>
-        </form>
-        <button id="start-btn" class="btn btn-success" {% if status['running'] %}disabled{% endif %}>Başlat</button>
-        <button id="stop-btn" class="btn btn-danger" {% if not status['running'] %}disabled{% endif %}>Durdur</button>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script>
         function updateStatus() {
             $.getJSON('/status', function(data) {
-                $('#running-status').text(data.running ? 'Bot çalışıyor' : 'Bot durduruldu');
+                $('#running-status').text(data.running ? 'Bot Çalışıyor' : 'Bot Durduruldu');
                 if (data.running) {
                     $('#total-equity').text(data.total_equity.toFixed(2));
                     $('#start-btn').prop('disabled', true);
                     $('#stop-btn').prop('disabled', false);
-                    $('#config-form input, #config-form button').prop('disabled', true);
+                    $('#config-form input, #config-form .config-btn').prop('disabled', true);
                 } else {
                     $('#start-btn').prop('disabled', false);
                     $('#stop-btn').prop('disabled', true);
-                    $('#config-form input, #config-form button').prop('disabled', false);
+                    $('#config-form input, #config-form .config-btn').prop('disabled', false);
                 }
             });
         }
