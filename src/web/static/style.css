@@ -1,26 +1,27 @@
 /* Genel Stil */
 body {
-    background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
-    color: #e0e0e0;
-    font-family: 'Orbitron', sans-serif;
+    background: linear-gradient(135deg, #1f2525 0%, #343a3a 100%);
+    color: #d8e0e0;
+    font-family: 'Playfair Display', serif;
     margin: 0;
     padding: 0;
 }
 
 /* Başlık Çubuğu */
 .header {
-    background: linear-gradient(90deg, #007bff, #00d4ff);
-    padding: 20px;
+    background: linear-gradient(90deg, #0056b3, #00aaff);
+    padding: 25px;
     text-align: center;
     position: relative;
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.5);
+    box-shadow: 0 2px 10px rgba(0, 86, 179, 0.4);
 }
 
 .header h1 {
     margin: 0;
-    font-size: 2.5em;
+    font-size: 2.2em;
     color: #fff;
-    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.7);
+    font-weight: 700;
+    letter-spacing: 1px;
 }
 
 .header-gradient {
@@ -29,45 +30,46 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.1), transparent);
+    background: linear-gradient(to bottom, rgba(255, 255, 255, 0.05), transparent);
     z-index: 0;
 }
 
 /* Container */
 .container {
-    margin-top: 40px;
-    padding: 0 15px;
+    margin-top: 50px;
+    padding: 0 20px;
 }
 
 /* Durum Kartı */
 .status-card {
-    background: #2d2d2d;
+    background: #2a3030;
     border: none;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    padding: 20px;
-    transition: transform 0.3s ease;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 25px;
+    transition: box-shadow 0.3s ease;
 }
 
 .status-card:hover {
-    transform: translateY(-5px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
 .status-card h5 {
-    color: #00d4ff;
-    font-size: 1.5em;
+    color: #00aaff;
+    font-size: 1.4em;
     margin-bottom: 15px;
+    font-weight: 700;
 }
 
 .status-text {
-    font-size: 1.2em;
+    font-size: 1.1em;
     color: #28a745;
     margin-bottom: 10px;
 }
 
 .equity-text {
-    font-size: 1.1em;
-    color: #e0e0e0;
+    font-size: 1em;
+    color: #d8e0e0;
 }
 
 .symbol-list {
@@ -76,49 +78,55 @@ body {
 }
 
 .symbol-list li {
-    margin: 10px 0;
-    font-size: 0.95em;
+    margin: 8px 0;
+    font-size: 0.9em;
 }
 
 .highlight {
-    color: #00d4ff;
+    color: #00aaff;
     font-weight: 700;
 }
 
 /* Yapılandırma Kartı */
 .config-card {
-    background: #252525;
-    padding: 20px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-    margin-bottom: 20px;
+    background: #2a3030;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin-bottom: 25px;
+    transition: box-shadow 0.3s ease;
+}
+
+.config-card:hover {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
 }
 
 .config-card h5 {
-    color: #007bff;
-    font-size: 1.5em;
+    color: #0056b3;
+    font-size: 1.4em;
     margin-bottom: 15px;
+    font-weight: 700;
 }
 
 .form-control {
-    background: #333;
+    background: #3a4040;
     color: #fff;
-    border: 1px solid #555;
-    border-radius: 8px;
+    border: 1px solid #4a5050;
+    border-radius: 6px;
     padding: 10px;
     transition: border-color 0.3s ease;
 }
 
 .form-control:focus {
-    border-color: #00d4ff;
-    box-shadow: 0 0 5px rgba(0, 212, 255, 0.5);
+    border-color: #00aaff;
+    box-shadow: 0 0 4px rgba(0, 170, 255, 0.3);
     outline: none;
 }
 
 .form-group label {
-    font-size: 0.9em;
-    color: #b0b0b0;
-    margin-bottom: 5px;
+    font-size: 0.85em;
+    color: #b0b8b8;
+    margin-bottom: 6px;
 }
 
 /* Butonlar */
@@ -127,33 +135,33 @@ body {
 }
 
 .control-btn, .config-btn {
-    padding: 12px 25px;
-    font-size: 1.1em;
-    border-radius: 25px;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 8px;
     border: none;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .control-btn.btn-success {
-    background: linear-gradient(45deg, #28a745, #34d058);
+    background: linear-gradient(45deg, #218838, #28a745);
 }
 
 .control-btn.btn-danger {
-    background: linear-gradient(45deg, #dc3545, #ff5767);
+    background: linear-gradient(45deg, #c82333, #dc3545);
 }
 
 .config-btn.btn-primary {
-    background: linear-gradient(45deg, #007bff, #00d4ff);
+    background: linear-gradient(45deg, #0056b3, #007bff);
 }
 
 .control-btn:hover, .config-btn:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .control-btn:disabled, .config-btn:disabled {
-    opacity: 0.6;
+    opacity: 0.7;
     transform: none;
     cursor: not-allowed;
 }

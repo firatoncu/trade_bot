@@ -1,15 +1,15 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Kripto Trading Bot</title>
+    <title>Crypto Trading Bot</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header class="header">
-        <h1>Kripto Trading Bot</h1>
+        <h1>Crypto Trading Bot</h1>
         <div class="header-gradient"></div>
     </header>
     <div class="container">
@@ -17,17 +17,17 @@
             <div class="col-md-6">
                 <div id="status" class="card status-card">
                     <div class="card-body">
-                        <h5>Durum Paneli</h5>
-                        <p id="running-status" class="status-text">{{ 'Bot Çalışıyor' if status['running'] else 'Bot Durduruldu' }}</p>
+                        <h5>Status Dashboard</h5>
+                        <p id="running-status" class="status-text">{{ 'Bot Running' if status['running'] else 'Bot Stopped' }}</p>
                         {% if status['running'] %}
-                            <p class="equity-text">Toplam Özkaynak: <span id="total-equity">{{ status['total_equity']|round(2) }}</span> USDT</p>
+                            <p class="equity-text">Total Equity: <span id="total-equity">{{ status['total_equity']|round(2) }}</span> USDT</p>
                             <ul class="symbol-list">
                                 {% for symbol, data in status['symbols'].items() %}
                                     <li>{{ symbol }}: 
-                                        <span class="highlight">Özkaynak: {{ data['equity']|round(2) }}</span>, 
-                                        Pozisyon: {{ data['position_size'] }}, 
-                                        Giriş: {{ data['entry_price'] or 'Yok' }}, 
-                                        İşlemler: {{ data['transactions'] }}
+                                        <span class="highlight">Equity: {{ data['equity']|round(2) }}</span>, 
+                                        Position: {{ data['position_size'] }}, 
+                                        Entry: {{ data['entry_price'] or 'None' }}, 
+                                        Trades: {{ data['transactions'] }}
                                     </li>
                                 {% endfor %}
                             </ul>
@@ -37,36 +37,36 @@
             </div>
             <div class="col-md-6">
                 <form id="config-form" method="POST" action="/update_config" class="config-card">
-                    <h5>Yapılandırma</h5>
+                    <h5>Configuration</h5>
                     <div class="form-group">
-                        <label>Semboller (virgülle ayrılmış):</label>
+                        <label>Symbols (comma-separated):</label>
                         <input type="text" class="form-control" name="symbols" value="{{ ','.join(config['symbols']) }}" {% if status['running'] %}disabled{% endif %}>
                     </div>
                     <div class="form-group">
-                        <label>Grid Adımı:</label>
+                        <label>Grid Step:</label>
                         <input type="number" step="0.0001" class="form-control" name="grid_step" value="{{ config['grid_step'] }}" {% if status['running'] %}disabled{% endif %}>
                     </div>
                     <div class="form-group">
-                        <label>Kaldıraç:</label>
+                        <label>Leverage:</label>
                         <input type="number" class="form-control" name="leverage" value="{{ config['leverage'] }}" {% if status['running'] %}disabled{% endif %}>
                     </div>
                     <div class="form-group">
-                        <label>Komisyon:</label>
+                        <label>Commission:</label>
                         <input type="number" step="0.0001" class="form-control" name="commission" value="{{ config['commission'] }}" {% if status['running'] %}disabled{% endif %}>
                     </div>
                     <div class="form-group">
-                        <label>Başlangıç Sermayesi (USDT):</label>
+                        <label>Initial Capital (USDT):</label>
                         <input type="number" class="form-control" name="initial_capital" value="{{ config['initial_capital'] }}" {% if status['running'] %}disabled{% endif %}>
                     </div>
                     <div class="form-group">
-                        <label>Hedef Kar Oranı:</label>
+                        <label>Target Profit Ratio:</label>
                         <input type="number" step="0.0001" class="form-control" name="target_profit" value="{{ config['target_profit'] }}" {% if status['running'] %}disabled{% endif %}>
                     </div>
-                    <button type="submit" class="btn btn-primary config-btn" {% if status['running'] %}disabled{% endif %}>Güncelle</button>
+                    <button type="submit" class="btn btn-primary config-btn" {% if status['running'] %}disabled{% endif %}>Update</button>
                 </form>
                 <div class="control-buttons">
-                    <button id="start-btn" class="btn btn-success control-btn" {% if status['running'] %}disabled{% endif %}>Başlat</button>
-                    <button id="stop-btn" class="btn btn-danger control-btn" {% if not status['running'] %}disabled{% endif %}>Durdur</button>
+                    <button id="start-btn" class="btn btn-success control-btn" {% if status['running'] %}disabled{% endif %}>Start</button>
+                    <button id="stop-btn" class="btn btn-danger control-btn" {% if not status['running'] %}disabled{% endif %}>Stop</button>
                 </div>
             </div>
         </div>
@@ -75,7 +75,7 @@
     <script>
         function updateStatus() {
             $.getJSON('/status', function(data) {
-                $('#running-status').text(data.running ? 'Bot Çalışıyor' : 'Bot Durduruldu');
+                $('#running-status').text(data.running ? 'Bot Running' : 'Bot Stopped');
                 if (data.running) {
                     $('#total-equity').text(data.total_equity.toFixed(2));
                     $('#start-btn').prop('disabled', true);
