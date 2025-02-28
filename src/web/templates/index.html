@@ -1,55 +1,99 @@
-from flask import Flask, render_template, request, jsonify
-import threading
-from src.trading_bot import TradingBot
-from src.config import default_config
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Kripto Trading Bot</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Kripto Trading Bot</h1>
+        <div id="status" class="card">
+            <div class="card-body">
+                <h5>Durum</h5>
+                <p id="running-status">{{ 'Bot çalışıyor' if status['running'] else 'Bot durduruldu' }}</p>
+                {% if status['running'] %}
+                    <p>Toplam Özkaynak: <span id="total-equity">{{ status['total_equity']|round(2) }}</span> USDT</p>
+                    <ul>
+                    {% for symbol, data in status['symbols'].items() %}
+                        <li>{{ symbol }}: Özkaynak: {{ data['equity']|round(2) }}, Pozisyon: {{ data['position_size'] }}, Giriş Fiyatı: {{ data['entry_price'] or 'Yok' }}, İşlem Sayısı: {{ data['transactions'] }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        <form id="config-form" method="POST" action="/update_config">
+            <div class="form-group">
+                <label>Semboller (virgülle ayrılmış):</label>
+                <input type="text" class="form-control" name="symbols" value="{{ ','.join(config['symbols']) }}" {% if status['running'] %}disabled{% endif %}>
+            </div>
+            <div class="form-group">
+                <label>Grid Adımı:</label>
+                <input type="number" step="0.0001" class="form-control" name="grid_step" value="{{ config['grid_step'] }}" {% if status['running'] %}disabled{% endif %}>
+            </div>
+            <div class="form-group">
+                <label>Kaldıraç:</label>
+                <input type="number" class="form-control" name="leverage" value="{{ config['leverage'] }}" {% if status['running'] %}disabled{% endif %}>
+            </div>
+            <div class="form-group">
+                <label>Komisyon:</label>
+                <input type="number" step="0.0001" class="form-control" name="commission" value="{{ config['commission'] }}" {% if status['running'] %}disabled{% endif %}>
+            </div>
+            <div class="form-group">
+                <label>Başlangıç Sermayesi (USDT):</label>
+                <input type="number" class="form-control" name="initial_capital" value="{{ config['initial_capital'] }}" {% if status['running'] %}disabled{% endif %}>
+            </div>
+            <div class="form-group">
+                <label>Hedef Kar Oranı:</label>
+                <input type="number" step="0.0001" class="form-control" name="target_profit" value="{{ config['target_profit'] }}" {% if status['running'] %}disabled{% endif %}>
+            </div>
+            <button type="submit" class="btn btn-primary" {% if status['running'] %}disabled{% endif %}>Yapılandırmayı Güncelle</button>
+        </form>
+        <button id="start-btn" class="btn btn-success" {% if status['running'] %}disabled{% endif %}>Başlat</button>
+        <button id="stop-btn" class="btn btn-danger" {% if not status['running'] %}disabled{% endif %}>Durdur</button>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        function updateStatus() {
+            $.getJSON('/status', function(data) {
+                $('#running-status').text(data.running ? 'Bot çalışıyor' : 'Bot durduruldu');
+                if (data.running) {
+                    $('#total-equity').text(data.total_equity.toFixed(2));
+                    $('#start-btn').prop('disabled', true);
+                    $('#stop-btn').prop('disabled', false);
+                    $('#config-form input, #config-form button').prop('disabled', true);
+                } else {
+                    $('#start-btn').prop('disabled', false);
+                    $('#stop-btn').prop('disabled', true);
+                    $('#config-form input, #config-form button').prop('disabled', false);
+                }
+            });
+        }
 
-app = Flask(__name__, template_folder='templates', static_folder='static')
+        $('#start-btn').click(function() {
+            $.post('/start', function(response) {
+                alert(response.message);
+                updateStatus();
+            });
+        });
 
-bot = None
-bot_thread = None
-config = default_config.copy()
+        $('#stop-btn').click(function() {
+            $.post('/stop', function(response) {
+                alert(response.message);
+                updateStatus();
+            });
+        });
 
-@app.route('/')
-def index():
-    status = bot.get_status() if bot else {'running': False}
-    return render_template('index.html', status=status, config=config)
+        $('#config-form').submit(function(e) {
+            e.preventDefault();
+            $.post('/update_config', $(this).serialize(), function(response) {
+                alert(response.message);
+            });
+        });
 
-@app.route('/start', methods=['POST'])
-def start_bot():
-    global bot, bot_thread
-    if bot is None:
-        bot = TradingBot(**config)
-        bot_thread = threading.Thread(target=bot.start)
-        bot_thread.start()
-        return jsonify({'message': 'Bot başlatıldı'})
-    return jsonify({'message': 'Bot zaten çalışıyor'})
-
-@app.route('/stop', methods=['POST'])
-def stop_bot():
-    global bot, bot_thread
-    if bot is not None:
-        bot.stop()
-        bot_thread.join()
-        bot, bot_thread = None, None
-        return jsonify({'message': 'Bot durduruldu'})
-    return jsonify({'message': 'Bot çalışmıyor'})
-
-@app.route('/update_config', methods=['POST'])
-def update_config():
-    global config
-    if bot is None:
-        config['symbols'] = request.form.get('symbols').split(',')
-        config['grid_step'] = float(request.form.get('grid_step'))
-        config['leverage'] = int(request.form.get('leverage'))
-        config['commission'] = float(request.form.get('commission'))
-        config['initial_capital'] = float(request.form.get('initial_capital'))
-        config['target_profit'] = float(request.form.get('target_profit'))
-        return jsonify({'message': 'Yapılandırma güncellendi'})
-    return jsonify({'message': 'Bot çalışırken yapılandırma güncellenemez'})
-
-@app.route('/status')
-def get_status():
-    return jsonify(bot.get_status() if bot else {'running': False})
-
-if __name__ == '__main__':
-    app.run(debug=True)
+        setInterval(updateStatus, 5000);
+        updateStatus();
+    </script>
+</body>
+</html>
